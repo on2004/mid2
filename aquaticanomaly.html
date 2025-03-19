@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQUATIC ANOMALY</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        body {
+            background: black;
+            color: cyan;
+            font-family: 'VT323', monospace;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Animated background */
+        .background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(0,0,50,0.8) 0%, black 100%);
+            z-index: -1;
+            animation: abyss 10s infinite alternate;
+        }
+
+        @keyframes abyss {
+            0% { background: radial-gradient(circle, rgba(0,0,50,0.8) 0%, black 100%); }
+            100% { background: radial-gradient(circle, rgba(0,0,100,0.8) 0%, black 100%); }
+        }
+
+        /* Liquid wave animation */
+        .wave {
+            font-size: 5em;
+            display: inline-block;
+            animation: liquidWave 5s infinite ease-in-out alternate;
+        }
+
+        @keyframes liquidWave {
+            0% { transform: translateY(5px) scaleX(1.1); filter: blur(2px); }
+            50% { transform: translateY(-5px) scaleX(0.9); filter: blur(4px); }
+            100% { transform: translateY(5px) scaleX(1.05); filter: blur(3px); }
+        }
+
+        /* Links */
+        a {
+            color: lime;
+            text-decoration: none;
+            font-size: 2em;
+            display: inline-block;
+            margin-top: 30px;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: red;
+            text-shadow: 0px 0px 10px red;
+        }
+
+        /* Canvas overlay */
+        #p5-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <h1 class="wave">≈</h1>
+    <h1 class="wave">≈</h1>
+
+    <a href="index.html">BACK TO RANDOMNESS</a>
+
+    <script>
+        let xLoc = [], yLoc = [], numSegments = 80;
+        let fish = [];
+        let titleX, titleY;
+        let mvmnt = 0;
+
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.id("p5-canvas");
+            for(let i = 0; i < numSegments; i++) {
+                xLoc[i] = width / 2;
+                yLoc[i] = height / 2;
+            }
+            
+            // Title Position
+            titleX = width / 2;
+            titleY = height / 5;
+
+            // Create fish
+            for (let i = 0; i < 6; i++) {
+                fish.push(new Fish(random(width), random(height), random(1, 3)));
+            }
+
+            noFill();
+            cursor(CROSS);
+        }
+
+        function draw() {
+            clear();
+            xLoc[numSegments - 1] = mouseX;
+            yLoc[numSegments - 1] = mouseY;
+
+            // Draw floating title
+            push();
+            fill(0, 255, 255, 150);
+            textSize(80);
+            textAlign(CENTER, CENTER);
+            text("AQUATIC ANOMALY", titleX + sin(frameCount * 0.01) * 10, titleY + cos(frameCount * 0.02) * 5);
+            pop();
+
+            // Draw sketch trail effect
+            for(let i = 0; i < numSegments - 1; i++) {
+                xLoc[i] = xLoc[i + 1];
+                yLoc[i] = yLoc[i + 1];
+
+                let diameter = sin(map(i, 0, numSegments - 1, 0, PI)) * 300; // Smaller, more subtle
+                let colorVal = (diameter + mvmnt) % 255;
+                
+                stroke(colorVal, 100, 255 - colorVal, 120);
+                strokeWeight(2);
+                ellipse(xLoc[i], yLoc[i], diameter);
+            }
+
+            mvmnt = (mvmnt + 1) % 255;
+
+            // Draw fish
+            for (let f of fish) {
+                f.move();
+                f.display();
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        class Fish {
+            constructor(x, y, speed) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+                this.direction = random(TWO_PI);
+            }
+
+            move() {
+                this.x += cos(this.direction) * this.speed;
+                this.y += sin(this.direction) * this.speed;
+
+                // Change direction occasionally
+                if (random() < 0.01) {
+                    this.direction = random(TWO_PI);
+                }
+
+                // Boundary wrap-around
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0;
+                if (this.y < 0) this.y = height;
+            }
+
+            display() {
+                push();
+                translate(this.x, this.y);
+                rotate(this.direction);
+                fill(0, 150, 255, 180);
+                noStroke();
+
+                // Body
+                ellipse(0, 0, 20, 10);
+                
+                // Tail
+                triangle(-10, -5, -15, 0, -10, 5);
+                
+                // Eyes
+                fill(255);
+                ellipse(5, -3, 3, 3);
+                pop();
+            }
+        }
+    </script>
+</body>
+</html>

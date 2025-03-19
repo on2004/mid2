@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRID INSANITY</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        body {
+            background: black;
+            color: lime;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 0 0 10px red, 0 0 20px white;
+            animation: glitch 0.3s infinite alternate;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translateX(2px); text-shadow: -2px 0 red, 2px 0 blue; }
+            100% { transform: translateX(-2px); text-shadow: -2px 0 blue, 2px 0 red; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .grid div {
+            width: 50px;
+            height: 50px;
+            background: lime;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: black;
+            font-weight: bold;
+            transition: transform 0.2s;
+            animation: gridMove 1s infinite alternate ease-in-out;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: rotate(2deg) scale(1.02); }
+            100% { transform: rotate(-2deg) scale(1); }
+        }
+        
+        .grid div:hover {
+            background: red;
+            color: white;
+            transform: scale(1.5) rotate(720deg);
+            transition: background 0s, transform 0.1s;
+            animation: explode 0.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(1.5) rotate(720deg) translate(0, 0); opacity: 1; }
+            100% { transform: scale(2) rotate(1440deg) translate(calc(500px - 50%), calc(500px - 50%)); opacity: 0; }
+        }
+
+        a {
+            color: white;
+            text-decoration: none;
+            font-size: 2em;
+            display: block;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 0 0 10px red, 0 0 20px white;
+        }
+        
+        a:hover {
+            color: red;
+            transform: scale(1.2) rotate(-5deg);
+            text-shadow: 0 0 20px lime, 0 0 30px red;
+        }
+    </style>
+</head>
+<body>
+    <h1>GRID INSANITY</h1>
+    <div class="grid" id="grid"></div>
+    <a href="index.html">BACK TO RANDOMNESS</a>
+    
+    <script>
+        const grid = document.getElementById("grid");
+        const shapes = ["⬤", "▲", "■", "◆", "★", "☠", "∞", "7", "9", "3"];
+        
+        for (let i = 0; i < 100; i++) {
+            let div = document.createElement("div");
+            div.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+            
+            div.addEventListener("mouseenter", function() {
+                document.body.style.background = `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`;
+                
+                for (let j = 0; j < 5; j++) {
+                    let clone = div.cloneNode(true);
+                    clone.style.position = "absolute";
+                    clone.style.left = `${Math.random() * 100}vw`;
+                    clone.style.top = `${Math.random() * 100}vh`;
+                    clone.style.animation = "explode 0.5s ease-out forwards";
+                    document.body.appendChild(clone);
+                    setTimeout(() => clone.remove(), 1000);
+                }
+            });
+            
+            grid.appendChild(div);
+        }
+    </script>
+</body>
+</html>

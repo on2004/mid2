@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLORAL DESTRUCTION</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        body {
+            background: radial-gradient(circle, #1a1a1a, #000000);
+            color: white;
+            font-family: 'VT323', monospace;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+        }
+        
+        h1 {
+            font-size: 4em;
+            color: #ff007f;
+            text-shadow: 0 0 15px #ff007f, 0 0 30px #ff00ff;
+            animation: pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); text-shadow: 0 0 10px #ff007f, 0 0 20px #ff00ff; }
+            100% { transform: scale(1.1); text-shadow: 0 0 20px #ff007f, 0 0 40px #ff00ff; }
+        }
+        
+        canvas {
+            border: 2px solid #ff007f;
+            background: rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: auto;
+            width: 90vw;
+            height: 75vh;
+            box-shadow: 0 0 15px #ff007f;
+        }
+        
+        a {
+            color: #ff007f;
+            text-decoration: none;
+            font-size: 2em;
+            display: block;
+            margin-top: 10px;
+            text-shadow: 0 0 15px #ff00ff;
+            transition: 0.3s;
+        }
+        
+        a:hover {
+            color: white;
+            text-shadow: 0 0 25px #ff00ff;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>FLORAL DESTRUCTION</h1>
+    <canvas id="canvas"></canvas>
+    <script>
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth * 0.9;
+        canvas.height = window.innerHeight * 0.75;
+
+        function drawFlower(x, y) {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    let offsetX = (Math.random() - 0.5) * 100;
+                    let offsetY = (Math.random() - 0.5) * 100;
+                    ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                    ctx.beginPath();
+                    ctx.arc(x + offsetX, y + offsetY, Math.random() * 40 + 15, 0, Math.PI * 2);
+                    ctx.fill();
+                }, i * 40);
+            }
+        }
+
+        function neonExplosion(x, y) {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    let offsetX = (Math.random() - 0.5) * canvas.width;
+                    let offsetY = (Math.random() - 0.5) * canvas.height;
+                    ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    ctx.beginPath();
+                    ctx.arc(x + offsetX, y + offsetY, Math.random() * 20 + 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }, i * 20);
+            }
+        }
+
+        function backgroundFlash() {
+            document.body.style.transition = "background 0.2s";
+            document.body.style.background = `hsl(${Math.random() * 360}, 100%, 10%)`;
+            setTimeout(() => {
+                document.body.style.background = "radial-gradient(circle, #1a1a1a, #000000)";
+            }, 200);
+        }
+
+        canvas.addEventListener("click", function(event) {
+            let x = event.offsetX;
+            let y = event.offsetY;
+            drawFlower(x, y);
+            setTimeout(() => neonExplosion(x, y), 500);
+            backgroundFlash();
+        });
+
+        window.addEventListener("resize", function() {
+            canvas.width = window.innerWidth * 0.9;
+            canvas.height = window.innerHeight * 0.75;
+        });
+    </script>
+    <a href="index.html">BACK TO RANDOMNESS</a>
+</body>
+</html>
